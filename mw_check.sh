@@ -2,12 +2,12 @@
 
 check_cards(){
     # Check cards
-    CARDS=$(mwcap-info -l | grep video -c)
+    CARDS=$(sudo -u root mwcap-info -l | grep video -c)
     if (($CARDS>=1)); then
         echo "OK - ${CARDS} video inputs."
         exit 0
     elif (($CARDS>=81)); then
-        echo "WARNING - ${CARDS} video inputs."s
+        echo "WARNING - ${CARDS} video inputs."
         exit 1
     elif (($CARDS=0)); then
         echo "CRITICAL - ${CARDS} of video inputs."
