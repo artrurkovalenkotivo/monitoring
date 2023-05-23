@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 INSTALLDIR="/usr/share/monitoring"
-
+echo "To install monitoring tools root permissions are required!!"
 sudo apt update
 sudo apt install -y git python3-pip
 python3 -m pip install -U pip
