@@ -14,7 +14,7 @@ else
   sudo git clone https://github.com/artrurkovalenkotivo/monitoring.git $INSTALLDIR
 fi
 echo "Setup monitoring dependencies"
-python3 -m pip install -r ${INSTALLDIR}/requirements.txt
+sudo python3 -m pip install -r ${INSTALLDIR}/requirements.txt
 
 echo "Scripts are copied to: ${INSTALLDIR}"
 sudo chmod a+rx $INSTALLDIR/*.py
