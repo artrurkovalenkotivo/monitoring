@@ -112,7 +112,7 @@ class Signal(nagiosplugin.Resource):
         if self.installed_cards:
             for port in self.installed_cards:
                 info = self.get_card_info(port)
-                if info.get("signal") == "Valid":
+                if info.get("signal") in ("Valid", "Locked"):
                     status = 1
                     self.valid_cards.append(port)
                 else:
