@@ -3,6 +3,7 @@
 """Hello world Nagios check."""
 import argparse
 import logging
+import random
 import re
 import shlex
 import subprocess
@@ -11,15 +12,17 @@ import nagiosplugin
 
 MW_LIST = "mwcap-info -l"
 MW_INFO = "mwcap-info --info-all"
-TEST = """total: 4
+TEST_l4 = """total: 4
 device path     firmware ver    hardware ver    driver ver      alsa name       device name
 /dev/video0     1.34            B               1.3.4236        hw:0,0          01:01 Pro Capture Dual HDMI 4K+
 /dev/video1     1.34            B               1.3.4236        hw:1,0          01:00 Pro Capture Dual HDMI 4K+
 /dev/video2     1.34            B               1.3.4236        hw:2,0          00:01 Pro Capture Dual HDMI 4K+
 /dev/video3     1.34            B               1.3.4236        hw:3,0          00:00 Pro Capture Dual HDMI 4K+
 """
+TEST_l0 = """total: 0
+"""
 
-TEST2 = """Device
+TEST_info = """Device
   Family name ............................ Pro Capture
   Product name ........................... Pro Capture Dual HDMI 4K+
   Firmware name .......................... High Performance Firmware
@@ -34,7 +37,7 @@ TEST2 = """Device
   PCIe width ............................. x4
   Max playload size ...................... 256 Bytes
   Max read request szie .................. 128 Byt
-  Signal status .......................... Valid"""
+  Signal status .......................... {status}"""
 
 
 class Signal(nagiosplugin.Resource):
@@ -48,9 +51,9 @@ class Signal(nagiosplugin.Resource):
 
     def __stub(self, cmd):
         if MW_LIST in cmd:
-            output = TEST
+            output = random.choice((TEST_l0, TEST_l4))
         elif MW_INFO in cmd:
-            output = TEST2
+            output = TEST_info.format(status=random.choice(("None", "Valid", "Invalid", "Locked")))
         else:
             output = f"No stub for: '{cmd}'"
         return output
@@ -136,7 +139,8 @@ class SignalSummary(nagiosplugin.Summary):
     def problem(self, results):
         list_to_show = []
         for res in results:
-            if res.state.code != 1:
+            if res.state.code == 2:
+                # find critical only
                 list_to_show.append(res.metric.name)
         if len(list_to_show) == 0:
             msg = "No available ports"
