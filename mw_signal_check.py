@@ -46,7 +46,7 @@ class Signal(nagiosplugin.Resource):
         self._log = logging.getLogger("nagiosplugin")
         self._debug = kwargs.get("debug")
         self._target_port = kwargs.get("port")
-        self._exclude = kwargs.get("exclude", [])
+        self._exclude = kwargs.get("exclude") or []
         self.installed_cards = []
         self.valid_cards = []
 
