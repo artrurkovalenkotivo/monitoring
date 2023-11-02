@@ -46,6 +46,7 @@ class Signal(nagiosplugin.Resource):
         self._log = logging.getLogger("nagiosplugin")
         self._debug = kwargs.get("debug")
         self._target_port = kwargs.get("port")
+        self._exclude = kwargs.get("exclude", [])
         self.installed_cards = []
         self.valid_cards = []
 
@@ -114,6 +115,8 @@ class Signal(nagiosplugin.Resource):
         self.installed_cards = self.get_cards_ids()
         if self.installed_cards:
             for port in self.installed_cards:
+                if port in self._exclude:
+                    continue
                 info = self.get_card_info(port)
                 if info.get("signal") in ("Valid", "Locked"):
                     status = 1
@@ -157,8 +160,10 @@ def main():
                       help='specific port to check signal')
     argp.add_argument('-v', '--verbose', action='count', default=0,
                       help='increase output verbosity (use up to 3 times)')
+    argp.add_argument('-e', '--exclude', action='append',
+                      help='Exclude listed ports for analysis')
     args = argp.parse_args()
-    mw_check = Signal(debug=args.sandbox, port=args.port)
+    mw_check = Signal(debug=args.sandbox, port=args.port, exclude=args.exclude)
     check = nagiosplugin.Check(
         mw_check,
         nagiosplugin.ScalarContext("signal",
