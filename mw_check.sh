@@ -2,7 +2,7 @@
 
 check_cards(){
     # Check cards
-    CARDS=$(sudo -u root mwcap-info -l | grep video -c)
+    CARDS=$(sudo -u tivo mwcap-info -l | grep video -c)
     if (($CARDS>=1)); then
         echo "OK - ${CARDS} video inputs."
         exit 0
